@@ -259,6 +259,7 @@ string GenerarResumen(double elapsed_secs)
     for (int i = 0; i < NUM_PEERS; ++i)
     {
         total_num_messages_sended += peers[ i ]->GetNumberOfQueriesSended();
+        // cout << "Peer " << i << ": " << peers[ i ]->GetNumberOfQueriesSended() << endl;
     }
     ss << "\tTotal querys sended:   " << total_num_messages_sended << endl;
     ss << fixed << setprecision(2);
