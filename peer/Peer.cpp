@@ -15,16 +15,6 @@ void Peer::inner_body(void) {
     while (1) {
         while (!message_stack.empty()) {
             Message * message = message_stack.back();
-            string key = message->GetMessage().getKey();
-            cout << "Query: " << key << endl;
-            // const char * key = message->GetMessage().getKey().c_str();
-            int responsible_peeer = 0;
-            for (int i = 0; i < key.length(); ++i)
-            {
-                responsible_peeer += key[ i ];
-            }
-            responsible_peeer = responsible_peeer % NUM_PEERS;
-            cout << "Ira a: " << responsible_peeer << endl;
             // cout << time() << " - Peere " << setw(3) << this->GetId() << ": recibi respuesta a mi consulta " << message->GetMessage() << " enviada en tiempo " << message->GetCreationTime() << " hacia el servidor " << message->GetIdFrom() << endl;
             // cout << "Delay: " << time() - message->GetCreationTime() << endl;
             SumDelayAcum( time() - message->GetCreationTime() );
@@ -47,16 +37,23 @@ void Peer::inner_body(void) {
 
         // cout << this->GetId() << "Dormire por: " << sleep << endl  ;
         if ( ! message_wse_stack.empty() ) {
-            string * message_str = new string();
-            *message_str = "Hola desde ";
-            *message_str +=  this->GetIdString();
-
             edge_server_to = this->GetEdgeServerId();
             // cout << "Peere " << this->GetId() << " hacia " << edge_server_to << endl;
             this->querys_send++;
             number_of_querys_sended_this_cycle++;
             MessageWSE * message_wse = message_wse_stack.back();
             message_wse_stack.pop_back();
+
+            string key = message_wse->getKey();
+            cout << "Query: " << key << endl;
+            // const char * key = message->GetMessage().getKey().c_str();
+            int responsible_peeer = 0;
+            for (int i = 0; i < key.length(); ++i)
+            {
+                responsible_peeer += key[ i ];
+            }
+            responsible_peeer = responsible_peeer % NUM_PEERS;
+            cout << "Ira a: " << responsible_peeer << endl;
 
             this->number_of_querys_sended++;
             // Parametros de esta llamada: 
