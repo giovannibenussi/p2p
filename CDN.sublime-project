@@ -1,0 +1,27 @@
+{
+	"folders":
+	[
+		{
+			"follow_symlinks": true,
+			"path": "."
+		}
+	],
+	"settings":
+	{
+		"AStyleFormatter":
+		{
+			"options_c++":
+			{
+				"additional_options":
+				[
+					// "--style=java",
+					"--indent-classes",
+					"--indent-preprocessor",
+					"--indent-switches",
+					"--align-pointer=middle",
+				],
+				"indent-spaces": 4
+			}
+		}
+	}
+}

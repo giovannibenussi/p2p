@@ -1,0 +1,72 @@
+* [Proceso de enviar un mensaje desde un cliente a un EdgeServer](#proceso-de-enviar-un-mensaje-desde-un-cliente-a-un-edgeserver)
+
+<a name="proceso-de-enviar-un-mensaje-desde-un-cliente-a-un-edgeserver"></a>
+### Proceso de enviar un mensaje desde un cliente a un EdgeServer
+
+Él código a continuación corresponde a la clase cliente, pero es común en los demás servidores (edge servers y wse):
+
+![](https://dl.dropboxusercontent.com/u/82468524/cdn/envio_mensaje.png)
+![](https://dl.dropboxusercontent.com/u/82468524/cdn/envio_mensaje_transport.png)
+
+```c
+// Parametros de esta llamada: 
+// id del creador, tipo creador, id receptor, tipo receptor, 
+// tiempo creacion mensaje, mensaje (de tipo MessageWSE *) 
+Message * message = new Message(this->GetId(), NODE_CLIENT, edge_server_to, NODE_EDGE_SERVER, time(), message_wse);
+Message * message = new Message(this->GetId(), NODE_CLIENT, edge_server_to, NODE_EDGE_SERVER, time(), message_wse);
+// delay corresponde al delay de enviar mensaje entre isp de emisor y receptor
+delay = this->SendMessage(message);
+```
+
+SendMessage está definido en Node.cpp (**Ojo: puede ser sobreescrito por la clases que heredan de él)
+
+```c
+// Node.cpp
+double Node::SendMessage(Message *message) {
+    // Suma uno al contador de mensajes enviados
+    this->num_messages_sended++;
+    // Calcula el delay basado en el isp tanto del emisor como del receptor
+    // Necesita el tipo del receptor para saber en que arreglo de servidores buscar (clients, edge_servers, wse)
+    double delay = this->GetIspDelay(this->GetIsp(), message->GetIdTo(), message->GetTypeTo());
+    // Añade el mensaje a la cola de la capa de transporte y lo despierta si está idle
+    (*transport)->AddMessage(message);
+    if ((*transport)->idle()) {
+        (*transport)->activate();
+    }
+    return delay;
+}
+```
+
+Luego, dentro de *Transport.cpp*:
+
+```c
+while (1) {
+        // Por cada mensaje en el stack
+        while (!message_stack.empty()) {
+        	// Variable que guardará el servidor receptor (cliente, edge server o wse)
+            Node *servidor;
+            // [ Se asigna el servidor dependiendo del tipo ]
+
+            // Se añade el mensaje al receptor y se activa
+            servidor->AddMessage(message);
+            if (servidor->idle()) {
+                servidor->activate();
+            }
+        }
+        [ Se duerme el proceso...]
+    }
+```
+
+El receptor del mensaje realiza un proceso similar al proceso transporte:
+
+```c
+while (!message_stack.empty())
+{
+    Message * message = this->GetMessageFromMessageStack();
+    if (message->GetTypeFrom() == NODE_CLIENT) {
+        // [ Si es cliente ... ]
+    } else if (message->GetTypeFrom() == NODE_ORIGIN_SERVER) {
+        // [ Si es wse ... ]
+    }
+}
+```
