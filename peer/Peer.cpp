@@ -14,6 +14,7 @@ void Peer::inner_body(void) {
     cout << fixed << setprecision(4);
     while (1) {
         while (!message_stack.empty()) {
+            cout << "------------ NUEVO MENSAJE EN PEER" << endl;
             Message * message = message_stack.back();
             // cout << time() << " - Peere " << setw(3) << this->GetId() << ": recibi respuesta a mi consulta " << message->GetMessage() << " enviada en tiempo " << message->GetCreationTime() << " hacia el servidor " << message->GetIdFrom() << endl;
             // cout << "Delay: " << time() - message->GetCreationTime() << endl;
@@ -62,6 +63,7 @@ void Peer::inner_body(void) {
 
             // OPCION 1:
             Message * message = new Message(this->GetId(), NODE_PEER, edge_server_to, NODE_ORIGIN_SERVER, time(), message_wse);
+            cout << "............. PEER -> WSE" << endl;
             // OPCION 2:
 
             // FIN OPCIONES

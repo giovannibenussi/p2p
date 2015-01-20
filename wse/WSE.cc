@@ -8,6 +8,8 @@ void WSE::inner_body(void) {
             passivate();
         // ASSERT(!queue_in.empty());
 
+        cout << "------------ NUEVO MENSAJE EN WSE" << endl;
+
         Message *mes = message_stack.back();
         MessageWSE *m = mes->GetMessagePointer();
 
@@ -18,6 +20,7 @@ void WSE::inner_body(void) {
 
         m->setAnswer(WSE::getVersion(m->getKey(), m->getQuery()));
 
+        cout << "............. WSE -> PEER" << endl;
         this->SendMessage(new Message(this->GetId(), this->GetType(), mes->GetIdFrom(), mes->GetTypeFrom(), time(), m));
 
         /*switch ( m->source ) {

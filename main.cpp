@@ -117,7 +117,7 @@ class Simulation : public process
 
 
             char traces[2048];
-            strcpy(traces, "../../RISE_16M.DAT");
+            strcpy(traces, "../../RISE_UNO.DAT");
             // strcpy(traces, "../partial3.DAT");
             // strcpy(traces, "../../../Descargas/partial3.DAT");
             unsigned long int totalQueries = 1000000;
@@ -335,11 +335,6 @@ int main(int argc, char const * argv[])
     salida.open(archivo_salida.c_str());
     // salida << GenerarResumen(elapsed_secs);
     salida.close();
-
-    archivo_salida = "cp charts/received_querys_by_edge_servers charts/" + itos( seconds ) + "_received_querys_by_edge_servers";
-    system(archivo_salida.c_str());
-    archivo_salida = "cp charts/cache_hits_by_edge_servers charts/" + itos( seconds ) + "_cache_hits_by_edge_servers";
-    system(archivo_salida.c_str());
 
     // GenerateGraph();
 
