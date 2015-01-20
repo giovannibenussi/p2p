@@ -62,15 +62,17 @@ void Peer::inner_body(void) {
             // tiempo creacion mensaje, mensaje (de tipo MessageWSE *) 
 
             // OPCION 1:
-            Message * message = new Message(this->GetId(), NODE_PEER, edge_server_to, NODE_ORIGIN_SERVER, time(), message_wse);
-            cout << "............. PEER -> WSE" << endl;
-            // OPCION 2:
-
-            // FIN OPCIONES
-            
-            // delay corresponde al delay de enviar mensaje entre isp de emisor y receptor
-            delay = this->SendMessage(message);
-            unprocessed_message_stack.push_back(message);
+            if(responsible_peeer == this->GetId()){
+                Message * message = new Message(this->GetId(), NODE_PEER, 0, NODE_ORIGIN_SERVER, time(), message_wse);
+                cout << "............. PEER -> WSE" << endl;
+                delay = this->SendMessage(message);
+                unprocessed_message_stack.push_back(message);
+            }else{
+                Message * message = new Message(this->GetId(), NODE_PEER, responsible_peeer, NODE_PEER, time(), message_wse);
+                cout << "............. PEER -> PEER" << endl;
+                delay = this->SendMessage(message);
+                unprocessed_message_stack.push_back(message);
+            }
         }
         this->passivate();
     }
