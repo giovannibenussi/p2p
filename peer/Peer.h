@@ -17,6 +17,8 @@ class Peer : public Node
         unsigned int number_of_querys_sended;
         vector<MessageWSE *> message_wse_stack;
         lru_cache * cache;
+        int cache_hits_cycle;
+        int cache_miss_cycle;
     public:
         unsigned int querys_send;
         /**
@@ -46,6 +48,11 @@ class Peer : public Node
         {
 
         }
+        void AddCacheHit();
+        void AddCacheMiss();
+        int GetCacheHits();
+        int GetCacheMiss();
+
         static inline int GetResponsiblePeer(string key);
         static inline int GetHash(string key);
         // bool IsInCache(string key);

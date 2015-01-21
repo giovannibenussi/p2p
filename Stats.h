@@ -4,8 +4,17 @@
 #include "cppsim.hh"
 #include "Constants.h"
 #include "transport/Dns.h"
+#include "peer/Peer.h"
+#include <vector>
+#include <ctime>
+#include <sstream>
+#include <iomanip>
+#include <iostream>
+#include <string>
 
 class EdgeServer;
+
+using namespace std;
 
 class Stats : public process
 {
@@ -15,9 +24,12 @@ class Stats : public process
         ofstream * received_querys_by_edge_servers;
         ofstream cache_hits_by_edge_servers;
         ofstream cache_usage_stream;
+        ofstream cache_hits_stream;
+        ofstream cache_miss_stream;
         int DURACION_SIMULACION;
         Dns * dns;
         int TIME_WINDOW;
+        handle<Peer> * peers;
     public:
         /**
           *
@@ -29,8 +41,9 @@ class Stats : public process
           * - TIME_WINDOW: indica cada cuanto tiempo se recogerán estadísticas
           *
           **/
-        Stats(const string &name, int DURACION_SIMULACION, handle<EdgeServer> * edge_servers, Dns * dns, int TIME_WINDOW) : process(name)
+        Stats(const string &name, int DURACION_SIMULACION, Dns * dns, int TIME_WINDOW, handle<Peer> * peers) : process(name)
         {
+            this->peers = peers;
             this->edge_servers        = edge_servers;
             this->dns                 = dns;
             this->DURACION_SIMULACION = DURACION_SIMULACION;
@@ -47,6 +60,9 @@ class Stats : public process
             // que puede leer gnuplot
             cache_hits_by_edge_servers.open("charts/cache_hits_by_edge_servers");
             cache_usage_stream.open("charts/cache_usage");
+
+            cache_hits_stream.open("charts/cache_hits_y_miss");
+
             /*// Cache Hits File */
             this->GenerateCommands();
         }

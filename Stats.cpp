@@ -4,7 +4,8 @@
 
 unsigned int Stats::cycles = 0;
 
-static inline void loadBar(int x, int n, int w, double time) {
+static inline void loadBar(int x, int n, int w, double time)
+{
     // ANSI Control codes to go back to the
     // previous line and clear it.
     printf("\n\033[F\033[J");
@@ -26,7 +27,8 @@ static inline void loadBar(int x, int n, int w, double time) {
     printf("]");
 }
 
-void Stats::inner_body() {
+void Stats::inner_body()
+{
     clock_t begin = clock();
     // unsigned int previous_total_received_queries_by_edge_servers[ NUM_EDGE_SERVERS ];
     // for (int i = 0; i < NUM_EDGE_SERVERS; ++i) {
@@ -35,7 +37,8 @@ void Stats::inner_body() {
 
     cout << ".";
 
-    while (1) {
+    while (1)
+    {
         loadBar(time(), DURACION_SIMULACION, 100, double(clock() - begin) / CLOCKS_PER_SEC);
 
         // // Imprimo el tiempo en cada archivo
@@ -51,6 +54,18 @@ void Stats::inner_body() {
         //     cache_usage_stream << edge_servers[ i ]->GetUsedCache() << ", ";
         //     previous_total_received_queries_by_edge_servers[ i ] = edge_servers[ i ]->GetReceivedQueriesByClients();
         // }
+
+        int total_hits = 0;
+        int total_miss = 0;
+        for (int i = 0; i < NUM_PEERS; ++i)
+        {
+            total_hits += peers[ i ]->GetCacheHits();
+            total_miss += peers[ i ]->GetCacheMiss();
+            peers[ i ]->ResetCycle();
+        }
+        cache_hits_stream << time() << " " << total_hits << " " << total_miss << endl;
+        // cout << "Hits: " << total_hits << endl;
+        // cout << "Miss: " << total_miss << endl;
 
         dns->ResetCycle();
 

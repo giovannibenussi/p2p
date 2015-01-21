@@ -104,7 +104,7 @@ class Simulation : public process
             wse->SetTransport(&transport);
             wse->activate();
 
-            // handle<Stats> stats = new Stats("stats", DURACION_SIMULACION, edge_servers, dns, TIME_WINDOW);
+            handle<Stats> stats = new Stats("stats", DURACION_SIMULACION, dns, TIME_WINDOW, peers);
             // for (int i = 0; i < NUM_EDGE_SERVERS; ++i)
             // {
             //     edge_servers[ i ]->activate();
@@ -113,11 +113,12 @@ class Simulation : public process
             {
                 peers[ i ]->activate();
             }
-            // stats->activate();
+            stats->activate();
 
 
             char traces[2048];
-            strcpy(traces, "../../RISE_UNO.DAT");
+            strcpy(traces, "../../RISE_16M.DAT");
+            // strcpy(traces, "../../RISE_UNO.DAT");
             // strcpy(traces, "../partial3.DAT");
             // strcpy(traces, "../../../Descargas/partial3.DAT");
             unsigned long int totalQueries = 1000000;

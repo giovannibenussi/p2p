@@ -36,7 +36,7 @@ void Gen_rnd::inner_body( )
             for (int i = 0; i < NUM_PEERS; ++i)
             {
                 (*querys_sended_stream) << " " << peers[ i ]->GetNumberOfQuerysSendedThisCycle();
-                peers[ i ]->ResetCycle();
+                // peers[ i ]->ResetCycle();
             }
             (*querys_sended_stream) << endl;
             num_cycles++;

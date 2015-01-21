@@ -69,10 +69,11 @@ void Peer::inner_body(void)
                         lru_cache::const_iterator it = cache->find( hash );
                         if (it != cache->end())
                         {
-                            cout << "CACHE HIT: " << key << endl;
+                            // cout << "CACHE HIT: " << key << endl;
+                            this->AddCacheHit();
                         }else{
-                            cout << "CACHE MISS: " << key << endl;
-                            
+                            // cout << "CACHE MISS: " << key << endl;
+                            this->AddCacheMiss();
                         }
 
                         // cout << "Recibi desde un peer" << endl;
@@ -235,7 +236,26 @@ int Peer::GetNumberOfMessagesSendedToDns()
 
 void Peer::ResetCycle()
 {
+    // cout << "RESETEANDO CICLO " << endl;
     this->number_of_querys_sended_this_cycle = 0;
+    this->cache_hits_cycle = 0;
+    this->cache_miss_cycle = 0;
+}
+
+void Peer::AddCacheHit(){
+    this->cache_hits_cycle++;
+}
+
+void Peer::AddCacheMiss(){
+    this->cache_miss_cycle++;
+}
+
+int Peer::GetCacheHits(){
+    return this->cache_hits_cycle;
+}
+
+int Peer::GetCacheMiss(){
+    return this->cache_miss_cycle;
 }
 
 int Peer::GetNumberOfQuerysSendedThisCycle()
