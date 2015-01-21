@@ -34,6 +34,15 @@ void Peer::inner_body(void)
             }
             responsible_peeer = responsible_peeer % NUM_PEERS;
             int key = responsible_peeer;
+
+            int hash = 0;
+            for (int i = 0; i < key_string.length(); ++i)
+            {
+                hash += key_string[ i ] * 3 + 1;
+            }
+            hash = (hash) % NUM_PEERS;
+            // cout << "Key: " << key << endl << "Hash: " << hash << endl << endl;
+
             // key = 1;
             // strcpy(key_string, message->GetMessage().getKey());
             // cout << "Key: " << key << endl;
@@ -57,10 +66,13 @@ void Peer::inner_body(void)
                     {
 
                         // Busco en mi cache
-                        lru_cache::const_iterator it = cache->find( key );
+                        lru_cache::const_iterator it = cache->find( hash );
                         if (it != cache->end())
                         {
                             cout << "CACHE HIT: " << key << endl;
+                        }else{
+                            cout << "CACHE MISS: " << key << endl;
+                            
                         }
 
                         // cout << "Recibi desde un peer" << endl;
@@ -91,10 +103,10 @@ void Peer::inner_body(void)
                         // Lo Agrego al cache
                         // cout << "Key: " << key << endl;
                         // (*cache)[ key ] = message->GetMessage();
-                        (*cache)[ key ] = 10;
+                        (*cache)[ hash ] = 10;
                         // if (it != cache->end())
                         // {
-                            // cout << "AGREGUE A CACHE" << endl;
+                        // cout << "AGREGUE A CACHE" << endl;
                         // }
 
                         // cout << "Recibi desde WSE" << endl;
@@ -190,6 +202,17 @@ int Peer::GetResponsiblePeer(string key)
         responsible_peeer += key[ i ];
     }
     responsible_peeer = responsible_peeer % PEER_CACHE_SIZE;
+    return responsible_peeer;
+}
+
+int Peer::GetHash(string key)
+{
+    int responsible_peeer = 0;
+    for (int i = 0; i < key.length(); ++i)
+    {
+        responsible_peeer += key[ i ] * 3 + 1;
+    }
+    responsible_peeer = (responsible_peeer * 123) % PEER_CACHE_SIZE;
     return responsible_peeer;
 }
 

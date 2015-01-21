@@ -47,6 +47,7 @@ class Peer : public Node
 
         }
         static inline int GetResponsiblePeer(string key);
+        static inline int GetHash(string key);
         // bool IsInCache(string key);
         // MessageWSE GetFromCache(string key);
         void SetDns(Dns * dns)
