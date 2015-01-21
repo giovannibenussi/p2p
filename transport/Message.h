@@ -22,6 +22,9 @@ class Message {
         int type_to;
         int id_unique_to;
 
+        int id_original;
+        int type_original;
+
         double creation_time; // tiempo de creación (obtenido de un llamado a time() dentro de un nodo)
         MessageWSE * message; // Mensaje que contiene la query, utilizado para mantener compatibilidad
         unsigned long int id; // identificador único del mensaje
@@ -30,6 +33,18 @@ class Message {
         static unsigned long int instances;
 
     public:
+        void SetOriginal(int id_original, int type_original){
+            this->id_original = id_original;
+            this->type_original = type_original;
+        }
+
+        int GetIdOriginal(){
+            return this->id_original;
+        }
+
+        int GetTypeOriginal(){
+            return this->type_original;
+        }
         /**
           *
           * - id_from: id del creador del mensaje.
@@ -57,6 +72,8 @@ class Message {
             // (Ej. de los valores que tomará: 0, 1, 2, 3, 4, 5, ...)
             this->id = Message::instances;
             Message::instances++;
+            this->id_original = -1;
+            this->type_original = -1;
         }
         
         Message(int id_unique_from, int id_unique_to, double creation_time, MessageWSE * message){

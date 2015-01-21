@@ -2,58 +2,62 @@
 #define PEER_PEER
 
 #include "../node/Node.h"
+#include "../lru/lru.hpp"
 
 class Transport;
 class Dns;
 
 class Peer : public Node
 {
-private:
-    Dns *dns;
-    int number_of_messages_sended_to_dns;
-    int number_of_querys_sended_this_cycle;
-    unsigned int number_of_querys_sended;
-    vector<MessageWSE *> message_wse_stack;
-public:
-    unsigned int querys_send;
-    /**
-      *
-      * - Name: Nombre que utiliza libcppsim
-      * - Id: identificador único del Peere (ojo: puede tener el mismo identificador
-      *   que un edge server, pero el tipo es distinto)
-      * - Type: Tipo de Node (e.g.: NODE_Peer, NODE_EDGE_SERVER, NODE_ORIGIN_SERVER, NODE_DNS, etc).
-      *   Estos tipos están definidos en Constants.h
-      *
-      **/
-    Peer(const string &name, int id, int type) : Node(name, id, type)
-    {
-        this->querys_send = 0;
-        this->number_of_messages_sended_to_dns = 0;
-        this->number_of_querys_sended = 0;
-        this->number_of_querys_sended_this_cycle = 0;
-    }
-    ~Peer()
-    {
+    private:
+        Dns * dns;
+        int number_of_messages_sended_to_dns;
+        int number_of_querys_sended_this_cycle;
+        unsigned int number_of_querys_sended;
+        vector<MessageWSE *> message_wse_stack;
+        lru_cache * cache;
+    public:
+        unsigned int querys_send;
+        /**
+          *
+          * - Name: Nombre que utiliza libcppsim
+          * - Id: identificador único del Peere (ojo: puede tener el mismo identificador
+          *   que un edge server, pero el tipo es distinto)
+          * - Type: Tipo de Node (e.g.: NODE_Peer, NODE_EDGE_SERVER, NODE_ORIGIN_SERVER, NODE_DNS, etc).
+          *   Estos tipos están definidos en Constants.h
+          *
+          **/
 
-    }
-    void SetDns(Dns *dns)
-    {
-        this->dns = dns;
-    }
+        Peer(const string &name, int id, int type) : Node(name, id, type)
+        {
+            this->querys_send = 0;
+            this->number_of_messages_sended_to_dns = 0;
+            this->number_of_querys_sended = 0;
+            this->number_of_querys_sended_this_cycle = 0;
+            cache = new lru_cache( PEER_CACHE_SIZE );
+        }
+        ~Peer()
+        {
 
-    void AddMessageWse(MessageWSE *message_wse);
+        }
+        void SetDns(Dns * dns)
+        {
+            this->dns = dns;
+        }
 
-    void ResetCycle();
-    int GetNumberOfQuerysSendedThisCycle();
+        void AddMessageWse(MessageWSE * message_wse);
 
-    void inner_body(void);
-    int GetEdgeServerId();
-    int GetNumberOfMessagesSendedToDns();
-    void HaveToSendAMessage();
-    unsigned int GetNumberOfQueriesSended()
-    {
-        return this->number_of_querys_sended;
-    }
+        void ResetCycle();
+        int GetNumberOfQuerysSendedThisCycle();
+
+        void inner_body(void);
+        int GetEdgeServerId();
+        int GetNumberOfMessagesSendedToDns();
+        void HaveToSendAMessage();
+        unsigned int GetNumberOfQueriesSended()
+        {
+            return this->number_of_querys_sended;
+        }
 };
 
 #endif

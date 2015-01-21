@@ -53,4 +53,8 @@ extern int DURACION_SIMULACION;
 
 #define INTERVALO_MEDIR_CACHE_HITS 50
 
+#define PEER_CACHE_SIZE 100
+
+typedef plb::LRUCacheH4<string, int> lru_cache;
+
 #endif
