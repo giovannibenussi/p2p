@@ -1,6 +1,9 @@
 #ifndef CONSTANTS
 #define CONSTANTS
 
+#include "./lru/lru.hpp"
+#include "./wse/MessageWSE.h"
+
 //#define NUM_CLIENTS 10000
 //#define NUM_EDGE_SERVERS 10
 //#define DURACION_SIMULACION 10 // seconds
@@ -53,8 +56,9 @@ extern int DURACION_SIMULACION;
 
 #define INTERVALO_MEDIR_CACHE_HITS 50
 
-#define PEER_CACHE_SIZE 100
+#define PEER_CACHE_SIZE 1
 
-typedef plb::LRUCacheH4<string, int> lru_cache;
+// typedef plb::LRUCacheH4<int, MessageWSE> lru_cache;
+typedef plb::LRUCacheH4<int, int> lru_cache;
 
 #endif

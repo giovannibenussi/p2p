@@ -3,6 +3,7 @@
 
 #include "../node/Node.h"
 #include "../lru/lru.hpp"
+#include "../Constants.h"
 
 class Transport;
 class Dns;
@@ -35,11 +36,19 @@ class Peer : public Node
             this->number_of_querys_sended = 0;
             this->number_of_querys_sended_this_cycle = 0;
             cache = new lru_cache( PEER_CACHE_SIZE );
+            // lru_cache_cache * cache_cache = new lru_cache_cache(10);
+            // (*cache)[ 0 ] = a;
+            // (*cache)[ 1 ] = a;
+            // (*cache_cache)[0] = 10;
+            // cout << "PASO" << endl;
         }
         ~Peer()
         {
 
         }
+        static inline int GetResponsiblePeer(string key);
+        // bool IsInCache(string key);
+        // MessageWSE GetFromCache(string key);
         void SetDns(Dns * dns)
         {
             this->dns = dns;

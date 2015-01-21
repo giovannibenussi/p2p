@@ -25,6 +25,19 @@ void Peer::inner_body(void)
             message_stack.pop_back();
             // string * respuesta = new string("respuestaaaaa !!!!!!!");
             // this->SendMessage(new Message(this->GetId(), this->GetType(), message->GetIdFrom(), message->GetTypeFrom(), time(), respuesta));
+            string key_string = message->GetMessagePointer()->getKey();
+
+            int responsible_peeer = 0;
+            for (int i = 0; i < key_string.length(); ++i)
+            {
+                responsible_peeer += key_string[ i ];
+            }
+            responsible_peeer = responsible_peeer % NUM_PEERS;
+            int key = responsible_peeer;
+            // key = 1;
+            // strcpy(key_string, message->GetMessage().getKey());
+            // cout << "Key: " << key << endl;
+            // int key = Peer::GetResponsiblePeer( key_string );
             if (message->GetTypeFrom() == NODE_PEER || message->GetTypeFrom() == NODE_ORIGIN_SERVER)
             {
                 int id_message = -1;
@@ -40,8 +53,16 @@ void Peer::inner_body(void)
                 if (id_message == -1) // No lo envie antes
                 {
 
-                    if (message->GetTypeFrom() == NODE_PEER)
+                    if (message->GetTypeFrom() == NODE_PEER) // Un peer me contacto porque soy responsible
                     {
+
+                        // Busco en mi cache
+                        lru_cache::const_iterator it = cache->find( key );
+                        if (it != cache->end())
+                        {
+                            cout << "CACHE HIT: " << key << endl;
+                        }
+
                         // cout << "Recibi desde un peer" << endl;
                         Message * message_a_enviar = new Message(this->GetId(), NODE_PEER, 0, NODE_ORIGIN_SERVER, time(), message->GetMessagePointer());
                         message_a_enviar->SetOriginal(message->GetIdOriginal(), message->GetTypeOriginal());
@@ -66,15 +87,28 @@ void Peer::inner_body(void)
                         int mi_id = this->GetId();
                         int id_origen = original->GetIdOriginal();
 
+                        // lru_cache::const_iterator it = cache->find( key );
+                        // Lo Agrego al cache
+                        // cout << "Key: " << key << endl;
+                        // (*cache)[ key ] = message->GetMessage();
+                        (*cache)[ key ] = 10;
+                        // if (it != cache->end())
+                        // {
+                            // cout << "AGREGUE A CACHE" << endl;
+                        // }
+
                         // cout << "Recibi desde WSE" << endl;
                         // cout << "Mi id: " << mi_id << endl;
                         // cout << "Desde id: " << id_origen << endl;
-                        if(mi_id != id_origen && id_origen != -1){
+                        if (mi_id != id_origen && id_origen != -1)
+                        {
                             // cout << "Yo NOOO era el responsible" << endl;
                             Message * message_a_enviar = new Message(this->GetId(), NODE_PEER, original->GetIdOriginal(), NODE_PEER, time(), message->GetMessagePointer());
                             message_a_enviar->SetOriginal(message->GetIdOriginal(), message->GetTypeOriginal());
                             delay = this->SendMessage(message_a_enviar);
-                        }else{ // Yo era el responsible
+                        }
+                        else   // Yo era el responsible
+                        {
                             // cout << "Yo era el responsible" << endl;
                         }
                     }
@@ -99,12 +133,7 @@ void Peer::inner_body(void)
             string key = message_wse->getKey();
             // cout << "Query: " << key << endl;
             // const char * key = message->GetMessage().getKey().c_str();
-            int responsible_peeer = 0;
-            for (int i = 0; i < key.length(); ++i)
-            {
-                responsible_peeer += key[ i ];
-            }
-            responsible_peeer = responsible_peeer % NUM_PEERS;
+            int responsible_peeer = GetResponsiblePeer( key );
             // cout << "Ira a: " << responsible_peeer << endl;
 
             this->number_of_querys_sended++;
@@ -134,6 +163,34 @@ void Peer::inner_body(void)
         }
         this->passivate();
     }
+}
+
+// bool Peer::IsInCache(string key)
+// {
+// lru_cache::const_iterator it = cache->find(key);
+// return it != cache->end();
+// }
+
+// MessageWSE Peer::GetFromCache(string key)
+// {
+// lru_cache::const_iterator it = cache->find(key);
+
+// if (it != cache->end())
+// {
+//     return it.value();
+// }
+//     return NULL;
+// }
+
+int Peer::GetResponsiblePeer(string key)
+{
+    int responsible_peeer = 0;
+    for (int i = 0; i < key.length(); ++i)
+    {
+        responsible_peeer += key[ i ];
+    }
+    responsible_peeer = responsible_peeer % PEER_CACHE_SIZE;
+    return responsible_peeer;
 }
 
 void Peer::HaveToSendAMessage()

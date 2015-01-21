@@ -1,3 +1,5 @@
+#ifndef lRU
+#define lRU
 /*
  * Implementation of an LRU cache with a maximum size.
  *
@@ -369,3 +371,4 @@ typename LRUCacheH4<K, V>::Val * LRUCacheH4<K, V>::_insert(const K & key)
 
 
 }  // namespace plb
+#endif

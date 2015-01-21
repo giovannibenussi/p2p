@@ -35,6 +35,9 @@ class MessageWSE {
             source = _srcK;
         }
 
+        MessageWSE() {
+        }
+
         string getKey() {
             return key;
         }
